@@ -163,7 +163,14 @@ pip install opencv-python ultralytics boxmot torch pymavlink numpy
 ## Hardware & Platform Configuration
 
 ### 1. Model & Tracker Performance (Orin Nano vs Local CPU)
-The code is currently tuned for CPU testing. When deploying backward to an **NVIDIA Jetson / Orin Nano** or a machine with a CUDA GPU:
+The code is currently tuned for CPU testing on Windows. When deploying back to an **NVIDIA Jetson / Orin Nano**:
+
+**In `src/detector.py`**:
+Switch the PyTorch weights back to the TensorRT engine for real-time Jetson inference:
+```python
+# Change from "yolov8n.pt"
+model_path="model/fyp_test5_best.engine"
+```
 
 **In `src/tracker.py`**:
 Change the `StrongSort` initialisation back to use the GPU:
@@ -172,15 +179,16 @@ device="cuda",  # Change from "cpu"
 half=True       # Change from False to enable FP16 speedup
 ```
 
-### 2. Drone Connection Port (Linux vs Windows)
+### 2. Camera & Drone Connection (Jetson Linux vs Windows)
 **In `src/main.py`**:
-- **On Linux / Jetson:** Use `/dev/ttyUSB0` (or similar, like `/dev/ttyACM0`)
-- **On Windows:** Use `COM3` (check Device Manager for the exact COM port)
+- **Camera Device:** Change `device=0` back to Linux format `device="/dev/video0"`
+- **Drone Port:** On Linux / Jetson, use `/dev/ttyUSB0` (or similar, like `/dev/ttyACM0`). On Windows, use `COM3`.
+- **Drone Enable:** Make sure you actually uncomment `drone = Drone(port="/dev/ttyUSB0")` ! Local testing uses a mock.
 
-Example:
+Example changes for Jetson:
 ```python
-drone = Drone(port="/dev/ttyUSB0")  # Linux
-# drone = Drone(port="COM3")        # Windows
+cam   = VideoCapture(device="/dev/video0") # Jetson Camera
+drone = Drone(port="/dev/ttyUSB0")         # Real drone connection
 ```
 
 ---
