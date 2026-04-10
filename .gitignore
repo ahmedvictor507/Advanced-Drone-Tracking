@@ -1,0 +1,15 @@
+# Environment
+venv/
+__pycache__/
+
+# Mac/Windows
+.DS_Store
+Thumbs.db
+
+# YOLOv8
+yolov8n.pt
+runs/
+
+# Large Model files (prevent pushing 100MB+ files to GitHub)
+model/*.engine
+model/*.pt
